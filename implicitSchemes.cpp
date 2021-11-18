@@ -78,38 +78,33 @@ vector<double> ImplicitSchemes::thomasAlgorithm(vector<double> topDiagonal, vect
 	// x is the vector solution of the unknowns to calculate in the tri-diagonal system A * x = d
 	vector<double> x(n,0);
 
+	// @param temp is to temporary save the values
+	double temp;
+
 	/*
 	* brief Thomas Algorithm based on LU decomposition, where the system A*x = d can be re-written as LU = r
 	* where L, U are the lower and upper triangular matrices respectively
 	* then the system can be solved, first by solving Lp = r for p and then Ux = p for x, which is the solution
 	* Forwards steps:
 	* Solve the Lp = r, by setting the main diagonal to 1 and lower and upper diagonals to 0
+	* @param topDiagonal is the upper diagonal of the matrix 
+	* @param middiagonal is the main diagonal of the matrix 
+	* @param botDiagonal is the lower diagonal of the matrix 
 	*/
-	for (int i = 0; i < n; i++) {
-		if (i == 0){
+	for (int i = 1; i < n - 1; i++) {
+		if (i == 0) {
 			topDiagonal[0] /= midDiagonal[0];
 			d[0] /= midDiagonal[0];
-			midDiagonal[0] /= midDiagonal[0]; 
-		} else {
-			midDiagonal[i] -= (topDiagonal[i - 1] * botDiagonal[i]); 
-			d[i] -= (d[i - 1] * botDiagonal[i]);
-			botDiagonal[i] = 0; 
-			topDiagonal[i] /= midDiagonal[i];
-			d[i] /= midDiagonal[i];
-		}	
-	}
-	/* 
-	* Backwards steps:
-	* Solve the Ux = p for x
-	* @return x, the solution of A * x = d
-	*/
-	for (int i = n-1; i >= 0; i--) {
-		if (i == d[n]) {
-			x[n] = d[n];
 		}
 		else {
-			x[i] = d[i] - (topDiagonal[i] * x[i + 1]);
+			temp = 1.0 / (midDiagonal[i] - topDiagonal[i - 1] * botDiagonal[i]);
+			topDiagonal[i] *= temp;
+			d[i] = (d[i] - d[i - 1] * botDiagonal[i]) * temp;
 		}
+	}
+	x[n - 1] = d[n - 1];
+	for (int i = n - 2; i >= 0; i--) {
+		x[i] = d[i] - topDiagonal[i] * x[i + 1];
 	}
 	return x;
 }

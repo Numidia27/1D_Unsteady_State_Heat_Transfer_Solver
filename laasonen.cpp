@@ -101,7 +101,7 @@ void Laasonen::printLaasonen() {
 	if (resultsFile.is_open()) {
 	
 		for (unsigned i = 0; i < vectResult.size(); i++) {
-			resultsFile << (i * deltaX) << "	" << vectResult[i] << endl;
+			resultsFile << (i * deltaX) << "     " << vectResult[i] << endl;
 		}
 		resultsFile.close();
 	}
